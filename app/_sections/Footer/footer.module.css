@@ -1,0 +1,12 @@
+/* .container {
+  
+} */
+.container > div {
+  max-width: 300px;
+  justify-content: space-between;
+}
+
+.container > div > h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}

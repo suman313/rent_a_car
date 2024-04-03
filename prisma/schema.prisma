@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  email           String   @unique
+  DL_No           String   @unique
+  fname           String
+  lname           String
+  phone_number    String
+  street          String
+  city            String
+  Zip_code        String
+  Membership_id   String?
+  Membership_type String?
+  role            Role     @default(USER)
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model Car {
+  id                  String           @id @default(uuid())
+  registration_number String           @unique
+  Model               String
+  Make                String?
+  Model_year          String?
+  Car_category_name   String
+  Mileage             Int
+  ImageUrl            String
+  Availability_flag   Boolean
+  Category_name       String
+  car_category        Car_category     @relation(fields: [Category_name], references: [id])
+  Location_name       String
+  Location_details    Location_details @relation(fields: [Location_name], references: [id])
+}
+
+model Car_category {
+  id                String @id @default(uuid())
+  Category_name     String @unique
+  No_of_luggage     Int
+  No_of_person      Int
+  Cost_per_day      Int
+  Late_fee_per_hour Int
+  cars              Car[]
+}
+
+model Location_details {
+  id                String            @unique @default(uuid())
+  Location_name     String
+  Street            String
+  City              String
+  Street_name       String
+  Zipcode           Int
+  cars              Car[]
+  booking_details   Booking_details[] @relation("pickup_loc")
+  booking_details_1 Booking_details[] @relation("drop_loc")
+}
+
+model Booking_details {
+  id                String           @unique @default(uuid())
+  from_dt_tm        DateTime
+  return_dt_tm      DateTime
+  amount            Int
+  status            Boolean
+  pickup_loc        String
+  booking_details   Location_details @relation(fields: [pickup_loc], references: [id], name: "pickup_loc")
+  drop_loc          String
+  booking_details_1 Location_details @relation(fields: [drop_loc], references: [id], name: "drop_loc")
+  reg_no            String
+  DL_no             String
+}
